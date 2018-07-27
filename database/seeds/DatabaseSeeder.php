@@ -11,6 +11,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        // Seed with testing user data
+        if (env("APP_ENV") == "devel") {
+            $this->call(UserTableSeed::class);
+        }
     }
 }
