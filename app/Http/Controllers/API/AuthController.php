@@ -1,14 +1,18 @@
 <?php
-namespace App\Http\Controllers\API\AuthController;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Auth;
-use Request;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     function postIndex(Request $request) {
-        if (Auth::attempt(['email' => $request->input("email"), 'password' => $request->input("password"), 'active' => 1])) {
+        \Log::info("Email: " . $request->input("email") . ", password: " . $request->input("password"));
+        if (\Auth::attempt([
+            'email' => $request->input("email"),
+            'password' => $request->input("password"),
+            'active' => 1])
+        ) {
             return response()->ok();
         } else {
             return response()->unauthenticated();

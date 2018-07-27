@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Hash;
 
 class UserTableSeed extends Seeder
 {
@@ -13,7 +12,7 @@ class UserTableSeed extends Seeder
     public function run()
     {
         $user = new \App\User();
-        $user->password = Hash::make('test1234');
+        $user->password = \Hash::make('test1234');
         $user->identifier = 315;
         $user->name = "Daniel H.";
         $user->email = "daniel@hawton.org";
