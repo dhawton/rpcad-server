@@ -18,4 +18,12 @@ class AuthController extends Controller
             return response()->unauthenticated();
         }
     }
+
+    function getLogout() {
+        if (!\Auth::check()) { return response()->unauthenticated(); }
+
+        \Auth::logout();
+
+        return response()->ok();
+    }
 }

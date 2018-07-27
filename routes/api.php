@@ -16,8 +16,17 @@ use Illuminate\Http\Request;
 Route::group(
     ['prefix' => '/auth'], function() {
         Route::post('/', 'AuthController@postIndex');
+        Route::get('/logout', 'AuthController@getLogout');
     }
 );
+
+Route::group(['middleware'=>'auth'], function() {
+    Route::get('/servers', 'DataController@getServers');
+    Route::group(['middleware' => 'role:admin'], function() {
+        Route::post("/servers/{id?}", "DataController@postServers");
+        Route::delete("/servers/{id}", "DataController@deleteServer");
+    });
+});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
