@@ -1,0 +1,98 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "CAD Server Web API",
+        "description": "",
+        "contact": {
+            "name": "Daniel Hawton",
+            "url": "https://www.vatusa.net"
+        },
+        "version": "3.0"
+    },
+    "host": "api.cad.devel",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/auth": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login to CAD",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Return JSON Token.",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "error": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "not_logged_in"
+                },
+                "exception": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "OK": {
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "OK"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "securityDefinitions": {
+        "Session Cookie": {
+            "type": "apiKey",
+            "name": "cad_session",
+            "in": "header"
+        }
+    },
+    "tags": [
+        {
+            "name": "auth",
+            "description": "Authentication and deauthentication methods"
+        },
+        {
+            "name": "servers",
+            "description": "Handle FiveM Server listings"
+        },
+        {
+            "name": "user",
+            "description": "User account management actions"
+        }
+    ]
+}
