@@ -3,6 +3,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Server;
+use App\User;
 use Illuminate\Http\Request;
 
 class DataController extends Controller
@@ -35,5 +36,16 @@ class DataController extends Controller
         if (!$server) return response()->notfound();
         $server->delete();
         return response()->ok();
+    }
+
+    public function getUser(Request $request, $id) {
+        if (\Auth::user()->id != $id && \Auth::user()->hasRole("admin")) {
+            return response()->forbidden();
+        }
+
+        $user = User::find($id);
+        if (!$user) return response()->notfound();
+
+        return response()->ok(['user' => $user]);
     }
 }

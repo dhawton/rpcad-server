@@ -20,14 +20,11 @@ Route::group(
     }
 );
 
-Route::group(['middleware'=>'auth'], function() {
+Route::group(['middleware'=>'apiauth'], function() {
     Route::get('/servers', 'DataController@getServers');
     Route::group(['middleware' => 'role:admin'], function() {
         Route::post("/servers/{id?}", "DataController@postServers");
         Route::delete("/servers/{id}", "DataController@deleteServer");
     });
-});
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::get('/users/{id}', 'DataController@getUser');
 });
