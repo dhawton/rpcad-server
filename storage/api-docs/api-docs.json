@@ -45,6 +45,37 @@
                     }
                 }
             }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout from CAD",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Return JSON Token.",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
