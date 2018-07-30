@@ -173,7 +173,6 @@ class DataController extends Controller
      *                     type="object",
      *                     @SWG\Property(
      *                         property="user",
-     *                         type="object",
      *                         ref="#/definitions/User",
      *                     ),
      *                 ),

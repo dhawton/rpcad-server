@@ -279,7 +279,6 @@
                                 {
                                     "properties": {
                                         "user": {
-                                            "type": "object",
                                             "$ref": "#/definitions/User"
                                         }
                                     },
@@ -382,11 +381,11 @@
                     "type": "string"
                 },
                 "created_at": {
-                    "description": "Date added to database",
+                    "description": "Date/time added to database",
                     "type": "string"
                 },
                 "updated_at": {
-                    "description": "Class User",
+                    "description": "Date/time last updated in database",
                     "type": "string"
                 },
                 "roles": {
