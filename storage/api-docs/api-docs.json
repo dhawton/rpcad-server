@@ -2,14 +2,14 @@
     "swagger": "2.0",
     "info": {
         "title": "CAD Server Web API",
-        "description": "",
+        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\r\n          which require an API key passed in the header",
         "contact": {
             "name": "Daniel Hawton",
-            "url": "https://www.vatusa.net"
+            "email": "daniel@hawton.org"
         },
         "version": "1"
     },
-    "host": "api.cad.devel",
+    "host": "https://api.rpcad.org",
     "basePath": "/",
     "schemes": [
         "https"
@@ -227,7 +227,7 @@
             }
         },
         "/users/{id}": {
-            "delete": {
+            "get": {
                 "tags": [
                     "user"
                 ],
@@ -370,23 +370,28 @@
             "properties": {
                 "id": {
                     "description": "CAD User ID #",
-                    "type": "integer"
+                    "type": "integer",
+                    "example": "1"
                 },
                 "name": {
                     "description": "Account name",
-                    "type": "string"
+                    "type": "string",
+                    "example": "Daniel H."
                 },
                 "email": {
                     "description": "Email address of user",
-                    "type": "string"
+                    "type": "string",
+                    "example": "daniel@hawton.org"
                 },
                 "created_at": {
                     "description": "Date/time added to database",
-                    "type": "string"
+                    "type": "string",
+                    "example": "2018-07-30 12:31:33"
                 },
                 "updated_at": {
                     "description": "Date/time last updated in database",
-                    "type": "string"
+                    "type": "string",
+                    "example": "2018-07-30 12:31:33"
                 },
                 "roles": {
                     "description": "Array of roles",
@@ -395,7 +400,8 @@
                         "properties": {
                             "role": {
                                 "description": "Role",
-                                "type": "string"
+                                "type": "string",
+                                "example": "admin"
                             }
                         },
                         "type": "object"

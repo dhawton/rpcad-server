@@ -10,13 +10,14 @@ use \App\Http\Controllers\Controller as BaseController;
  *
  * @SWG\Swagger(
  *     basePath="/",
- *     host="api.cad.devel",
+ *     host="https://api.rpcad.org",
  *     schemes={"https"},
  *     @SWG\Info(
  *         version="1",
  *         title="CAD Server Web API",
- *         description="",
- *         @SWG\Contact(name="Daniel Hawton", url="https://www.vatusa.net"),
+ *         description="Paths with lock icon on right side require authentication, except for paths beginning with /external
+          which require an API key passed in the header",
+ *         @SWG\Contact(name="Daniel Hawton", email="daniel@hawton.org"),
  *     ),
  *     @SWG\Tag(name="auth",description="Authentication and deauthentication methods"),
  *     @SWG\Tag(name="servers",description="Handle FiveM Server listings"),

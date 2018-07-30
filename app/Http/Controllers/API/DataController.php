@@ -141,7 +141,7 @@ class DataController extends Controller
      * @param int     $id
      * @return array|\Illuminate\Http\JsonResponse|string
      *
-     * @SWG\Delete(
+     * @SWG\Get(
      *     path="/users/{id}",
      *     summary="Get user details",
      *     produces={"application/json"},
