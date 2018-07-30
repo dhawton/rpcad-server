@@ -11,14 +11,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *
  * @SWG\Definition(
  *     type="object",
- *     @SWG\Property(property="id", type="integer"),
+ *     @SWG\Property(property="id", type="integer", description="CAD User ID #"),
  *     @SWG\Property(property="name", type="string", description="Account name"),
  *     @SWG\Property(property="email", type="string", description="Email address of user"),
- *     @SWG\Property(property="created_at", type="string", description="Date added to database"),
- *     @SWG\Property(property="updated_at", type="string"),
- *     @SWG\Property(property="roles", type="array",
+ *     @SWG\Property(property="created_at", type="string", description="Date/time added to database"),
+ *     @SWG\Property(property="updated_at", type="string", description="Date/time last updated in database"),
+ *     @SWG\Property(property="roles", type="array", description="Array of roles",
  *         @SWG\Items(type="object",
- *             @SWG\Property(property="role", type="string")
+ *             @SWG\Property(property="role", type="string", description="Role")
  *         )
  *     )
  * )

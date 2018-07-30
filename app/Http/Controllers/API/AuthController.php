@@ -23,7 +23,7 @@ class AuthController extends APIController
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="Return JSON Token.",
+     *         description="OK Response",
      *         @SWG\Schema(
      *             ref="#/definitions/OK"
      *        )
@@ -60,7 +60,7 @@ class AuthController extends APIController
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="Return JSON Token.",
+     *         description="OK Response",
      *         @SWG\Schema(
      *             ref="#/definitions/OK"
      *        )

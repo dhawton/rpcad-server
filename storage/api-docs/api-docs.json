@@ -7,7 +7,7 @@
             "name": "Daniel Hawton",
             "url": "https://www.vatusa.net"
         },
-        "version": "3.0"
+        "version": "1"
     },
     "host": "api.cad.devel",
     "basePath": "/",
@@ -38,7 +38,7 @@
                         }
                     },
                     "200": {
-                        "description": "Return JSON Token.",
+                        "description": "OK Response",
                         "schema": {
                             "$ref": "#/definitions/OK"
                         }
@@ -69,12 +69,229 @@
                         }
                     },
                     "200": {
-                        "description": "Return JSON Token.",
+                        "description": "OK Response",
                         "schema": {
                             "$ref": "#/definitions/OK"
                         }
                     }
                 }
+            }
+        },
+        "/servers": {
+            "get": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Get list of servers",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "servers": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Server"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/servers/{id}": {
+            "post": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Edit Server Entry",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Server ID #",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Unique server name.",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Delete a server",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Server ID #",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
+        "/users/{id}": {
+            "delete": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user details",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID #",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
             }
         }
     },
@@ -100,6 +317,90 @@
                 "status": {
                     "type": "string",
                     "example": "OK"
+                }
+            },
+            "type": "object"
+        },
+        "Role": {
+            "properties": {
+                "id": {
+                    "description": "Class Role",
+                    "type": "integer"
+                },
+                "user_id": {
+                    "description": "User Identification Number",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "Associated Role",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Date added to database",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Class Role",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "Server": {
+            "properties": {
+                "id": {
+                    "description": "Class Server",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Unique server name",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Date added to database",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Class Server",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "User": {
+            "properties": {
+                "id": {
+                    "description": "CAD User ID #",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Account name",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email address of user",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "Date added to database",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Class User",
+                    "type": "string"
+                },
+                "roles": {
+                    "description": "Array of roles",
+                    "type": "array",
+                    "items": {
+                        "properties": {
+                            "role": {
+                                "description": "Role",
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
                 }
             },
             "type": "object"

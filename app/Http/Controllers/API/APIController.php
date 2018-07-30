@@ -13,7 +13,7 @@ use \App\Http\Controllers\Controller as BaseController;
  *     host="api.cad.devel",
  *     schemes={"https"},
  *     @SWG\Info(
- *         version="3.0",
+ *         version="1",
  *         title="CAD Server Web API",
  *         description="",
  *         @SWG\Contact(name="Daniel Hawton", url="https://www.vatusa.net"),

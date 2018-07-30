@@ -28,3 +28,9 @@ Route::group(['middleware'=>'apiauth'], function() {
     });
     Route::get('/users/{id}', 'DataController@getUser');
 });
+
+Route::get("/", [
+    'as' => 'l5-swagger.api',
+    'middleware' => config('l5-swagger.routes.middleware.api', []),
+    'uses' => '\L5Swagger\Http\Controllers\SwaggerController@api',
+]);
