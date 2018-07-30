@@ -47,9 +47,9 @@ class AuthController extends APIController
 
      * @return array|\Illuminate\Http\JsonResponse|string
      *
-     * @SWG\Post(
-     *     path="/auth",
-     *     summary="Login to CAD",
+     * @SWG\Get(
+     *     path="/auth/logout",
+     *     summary="Logout from CAD",
      *     produces={"application/json"},
      *     tags={"auth"},
      *     @SWG\Response(
