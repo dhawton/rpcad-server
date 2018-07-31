@@ -15,6 +15,8 @@ class AuthController extends APIController
      *     summary="Login to CAD",
      *     produces={"application/json"},
      *     tags={"auth"},
+     *     @SWG\Parameter(name="email", in="formData", description="User email address", type="string"),
+     *     @SWG\Parameter(name="password", in="formData", description="User password", type="string"),
      *     @SWG\Response(
      *         response="401",
      *         description="Unauthenticated",
