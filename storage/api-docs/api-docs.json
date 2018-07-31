@@ -125,14 +125,14 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Server ID #",
-                        "required": true,
+                        "description": "Server ID #, if not provided creates a new server entry",
                         "type": "integer"
                     },
                     {
                         "name": "name",
                         "in": "formData",
                         "description": "Unique server name.",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -158,6 +158,18 @@
                             "application/json": {
                                 "status": "error",
                                 "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
                             }
                         }
                     },
@@ -211,6 +223,18 @@
                             "application/json": {
                                 "status": "error",
                                 "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
                             }
                         }
                     },
@@ -268,6 +292,148 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
+        "/cad/status/{userid}": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user details",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID #, if not provided, defaults to logged in user",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "department",
+                        "in": "formData",
+                        "description": "Department user is in, IE: Civilian, Police, Sheriff, Highway, USCG",
+                        "type": "string"
+                    },
+                    {
+                        "name": "server",
+                        "in": "formData",
+                        "description": "Server ID the user is in",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "division",
+                        "in": "formData",
+                        "description": "Division to associate user with",
+                        "type": "string"
+                    },
+                    {
+                        "name": "status",
+                        "in": "formData",
+                        "description": "Status for user, valid options: 'Available', 'Busy', 'Out of Service', 'Offline'",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/error"
+                                },
+                                {
+                                    "properties": {
+                                        "misc": {
+                                            "description": "Extra data for debugging",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Bad Request",
+                                "misc": "Invalid status supplied"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
                     "200": {
                         "description": "OK Response",
                         "schema": {
@@ -301,7 +467,7 @@
                     "type": "string",
                     "example": "error"
                 },
-                "message": {
+                "msg": {
                     "type": "string",
                     "example": "not_logged_in"
                 },

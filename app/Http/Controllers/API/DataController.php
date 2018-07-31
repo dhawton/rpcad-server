@@ -40,7 +40,7 @@ class DataController extends Controller
      * )
      */
     public function getServers() {
-        return response()->api(Server::orderBy("name")->get());
+        return response()->ok(['servers' => Server::orderBy("name")->get()]);
     }
 
     /**
@@ -54,8 +54,8 @@ class DataController extends Controller
      *     produces={"application/json"},
      *     tags={"servers"},
      *     security={"session"},
-     *     @SWG\Parameter(name="id", in="path", description="Server ID #", required=true, type="integer"),
-     *     @SWG\Parameter(name="name", in="formData", description="Unique server name.", type="string"),
+     *     @SWG\Parameter(name="id", in="path", description="Server ID #, if not provided creates a new server entry", type="integer"),
+     *     @SWG\Parameter(name="name", in="formData", description="Unique server name.", required=true, type="string"),
      *     @SWG\Response(
      *         response="401",
      *         description="Unauthorized",
@@ -67,6 +67,12 @@ class DataController extends Controller
      *         description="Forbidden",
      *         @SWG\Schema(ref="#/definitions/error"),
      *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -121,6 +127,12 @@ class DataController extends Controller
      *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
      *     ),
      *     @SWG\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
@@ -161,6 +173,12 @@ class DataController extends Controller
      *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
      *     ),
      *     @SWG\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
@@ -192,4 +210,110 @@ class DataController extends Controller
 
         return response()->ok(['user' => $user]);
     }
+
+    /**
+     * @param Request $request
+     * @param int     $id
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Post(
+     *     path="/cad/status/{userid}",
+     *     summary="Get user details",
+     *     produces={"application/json"},
+     *     tags={"user"},
+     *     security={"session"},
+     *     @SWG\Parameter(name="userid", in="path", description="User ID #, if not provided, defaults to logged in user", type="integer"),
+     *     @SWG\Parameter(name="department", in="formData", description="Department user is in, IE: Civilian, Police, Sheriff, Highway, USCG", type="string"),
+     *     @SWG\Parameter(name="server", in="formData", description="Server ID the user is in", type="integer"),
+     *     @SWG\Parameter(name="division", in="formData", description="Division to associate user with", type="string"),
+     *     @SWG\Parameter(name="status", in="formData", description="Status for user, valid options: 'Available', 'Busy', 'Out of Service', 'Offline'", type="string"),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Bad Request",
+     *         @SWG\Schema(
+     *             type="object",
+     *             allOf={
+     *                 @SWG\Schema(ref="#/definitions/error"),
+     *                 @SWG\Schema(type="object",@SWG\Property(property="misc",type="string",description="Extra data for debugging")),
+     *             },
+     *         ),
+     *         examples={"application/json":{"status"="error","msg"="Bad Request","misc"="Invalid status supplied"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             type="object",
+     *             allOf={
+     *                 @SWG\Schema(
+     *                     ref="#/definitions/OK"
+     *                 ),
+     *                 @SWG\Schema(
+     *                     type="object",
+     *                     @SWG\Property(
+     *                         property="user",
+     *                         ref="#/definitions/User",
+     *                     ),
+     *                 ),
+     *             },
+     *         )
+     *     )
+     * )
+     */
+    public function postUserStatus(Request $request, $id = null) {
+        if (!$id) $id = \Auth::user()->id;
+
+        $user = User::find($id);
+        if (!$user) return response()->notfound();
+
+        // Check if user going offline, if so, assume setting everything to null
+        if ($user->status != "Offline" && $request->input("status") == "Offline") {
+            $user->status = "Offline";
+            $user->signed_on = null;
+            $user->server_id = null;
+            $user->department = null;
+            $user->division = null;
+            $user->save();
+        } else {
+            if ($request->has("status")) {
+                if (!in_array($request->input("status"), ['Available', 'Busy', 'Offline', 'Out of Service'])) return response()->conflict(['misc' => 'Invalid status']);
+                if ($user->status == "Offline" && $request->input("status") != "Offline") {
+                    $user->signed_on = \Carbon\Carbon::now();
+                }
+                $user->status = $request->input("status");
+            }
+            if ($request->has("department")) {
+                $user->department = $request->input("department");
+            }
+            if ($request->has("division")) {
+                $user->division = $request->input("division");
+            }
+            if ($request->has("server")) {
+                $user->server_id = $request->input("server");
+            }
+        }
+
+        $user->save();
+
+        return response()->ok(['user' => $user]);
+    }
+
 }

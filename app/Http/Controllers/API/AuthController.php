@@ -70,6 +70,12 @@ class AuthController extends APIController
     function getLogout() {
         if (!\Auth::check()) { return response()->unauthenticated(); }
 
+        \Auth::user()->division = null;
+        \Auth::user()->department = null;
+        \Auth::user()->status = "Offline";
+        \Auth::user()->server_id = null;
+        \Auth::user()->save();
+
         \Auth::logout();
 
         return response()->ok();

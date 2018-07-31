@@ -25,5 +25,8 @@ class UserTableSeed extends Seeder
         \App\Role::add($user->id, "Police");
         \App\Role::add($user->id, "Highway");
         \App\Role::add($user->id, "Civilian");
+
+        $s = new \App\Server(['name' => 'Test Server']);
+        $s->save();
     }
 }
