@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Http\Controllers\API;
 
+use App\Events\StatusChange;
 use App\Http\Controllers\Controller;
 use App\Server;
 use App\User;
@@ -45,7 +47,7 @@ class DataController extends Controller
 
     /**
      * @param Request $request
-     * @param int     $id
+     * @param int $id
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Post(
@@ -104,7 +106,7 @@ class DataController extends Controller
 
     /**
      * @param Request $request
-     * @param int     $id
+     * @param int $id
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Delete(
@@ -150,7 +152,7 @@ class DataController extends Controller
 
     /**
      * @param Request $request
-     * @param int     $id
+     * @param int $id
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Get(
@@ -213,7 +215,7 @@ class DataController extends Controller
 
     /**
      * @param Request $request
-     * @param int     $id
+     * @param int $id
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Post(
@@ -286,34 +288,56 @@ class DataController extends Controller
 
         // Check if user going offline, if so, assume setting everything to null
         if ($user->status != "Offline" && $request->input("status") == "Offline") {
+            event(new StatusChange($user->server_id, [
+                'id' => $user->id,
+                'status' => 'Offline',
+                'department' => null,
+                'division' => null
+            ]));
             $user->status = "Offline";
             $user->signed_on = null;
             $user->server_id = null;
             $user->department = null;
             $user->division = null;
             $user->save();
-        } else {
-            if ($request->has("status")) {
-                if (!in_array($request->input("status"), ['Available', 'Busy', 'Offline', 'Out of Service'])) return response()->conflict(['misc' => 'Invalid status']);
-                if ($user->status == "Offline" && $request->input("status") != "Offline") {
-                    $user->signed_on = \Carbon\Carbon::now();
-                }
-                $user->status = $request->input("status");
+            return response()->ok(['user' => $user]);
+        }
+
+        if ($request->has("status")) {
+            if (!in_array($request->input("status"), ['Available', 'Busy', 'Offline', 'Out of Service'])) return response()->conflict(['misc' => 'Invalid status']);
+            if ($user->status == "Offline" && $request->input("status") != "Offline") {
+                $user->signed_on = \Carbon\Carbon::now();
             }
-            if ($request->has("department")) {
-                $user->department = $request->input("department");
+            $user->status = $request->input("status");
+        }
+        if ($request->has("department")) {
+            $user->department = $request->input("department");
+        }
+        if ($request->has("division")) {
+            $user->division = $request->input("division");
+        }
+        if ($request->has("server")) {
+            if ($user->server_id != null) {
+                // Sign user off old CAD for server
+                event(new StatusChange($user->server_id, [
+                    'id' => $user->id,
+                    'status' => 'Offline',
+                    'department' => null,
+                    'division' => null
+                ]));
             }
-            if ($request->has("division")) {
-                $user->division = $request->input("division");
-            }
-            if ($request->has("server")) {
-                $user->server_id = $request->input("server");
-            }
+            $user->server_id = $request->input("server");
         }
 
         $user->save();
 
+        event(new StatusChange($user->server_id, [
+            'id' => $user->id,
+            'status' => $user->status,
+            'department' => $user->department,
+            'division' => $user->division
+        ]));
+
         return response()->ok(['user' => $user]);
     }
-
 }
