@@ -7,6 +7,9 @@
 if [ "$CAD_JOB_RUNNER" == "true" ]; then
   echo "*    *    *    *    *    cd /www && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontabs/application
   cd /www && php artisan migrate --force
+  /usr/bin/supervisord --nodaemon --configuration /etc/supervisord.conf
+elif [ "$CAD_QUEUE_WORKER" == "true" ]; then
+  cd /www && php artisan queue:work
+else
+  /usr/bin/supervisord --nodaemon --configuration /etc/supervisord.conf
 fi
-
-/usr/bin/supervisord --nodaemon --configuration /etc/supervisord.conf
