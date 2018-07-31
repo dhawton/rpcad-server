@@ -218,7 +218,7 @@ class DataController extends Controller
      *
      * @SWG\Post(
      *     path="/cad/status/{userid}",
-     *     summary="Get user details",
+     *     summary="Get or set user details, if you change status to offline, the remaining parameters are set to null automatically whether defined explicitly or not.  Values of null will be set when status is 'Offline' or when a logout is processed.",
      *     produces={"application/json"},
      *     tags={"user"},
      *     security={"session"},
