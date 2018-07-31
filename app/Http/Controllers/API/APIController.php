@@ -46,7 +46,7 @@ class APIController extends BaseController {
  *         example="error",
  *     ),
  *     @SWG\Property(
- *         property="message",
+ *         property="msg",
  *         type="string",
  *         example="not_logged_in",
  *     ),

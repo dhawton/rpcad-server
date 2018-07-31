@@ -13,8 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group(
-    ['prefix' => '/auth'], function() {
+Route::group(['prefix' => '/auth'], function() {
         Route::post('/', 'AuthController@postIndex');
         Route::get('/logout', 'AuthController@getLogout');
     }
@@ -26,7 +25,13 @@ Route::group(['middleware'=>'apiauth'], function() {
         Route::post("/servers/{id?}", "DataController@postServers");
         Route::delete("/servers/{id}", "DataController@deleteServer");
     });
-    Route::get('/users/{id}', 'DataController@getUser');
+    Route::get('/users/{id?}', 'DataController@getUser');
+
+    Route::group(['prefix' => '/cad'], function() {
+        Route::group(['middleware' => 'status:dispatch,self,admin'], function () {
+            Route::post('/status/{userid?}', 'DataController@postUserStatus');
+        });
+    });
 });
 
 Route::get("/", [
