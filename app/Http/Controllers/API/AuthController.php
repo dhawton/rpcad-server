@@ -33,7 +33,6 @@ class AuthController extends APIController
      * )
      */
     function postIndex(Request $request) {
-        \Log::info("Email: " . $request->input("email") . ", password: " . $request->input("password"));
         if (\Auth::attempt([
             'email' => $request->input("email"),
             'password' => $request->input("password"),

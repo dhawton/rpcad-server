@@ -19,6 +19,7 @@ use \App\Http\Controllers\Controller as BaseController;
           which require an API key passed in the header",
  *         @SWG\Contact(name="Daniel Hawton", email="daniel@hawton.org"),
  *     ),
+ *     @SWG\Tag(name="account",description="Account maintenance methods"),
  *     @SWG\Tag(name="auth",description="Authentication and deauthentication methods"),
  *     @SWG\Tag(name="servers",description="Handle FiveM Server listings"),
  *     @SWG\Tag(name="user",description="User account management actions"),

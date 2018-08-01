@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "CAD Server Web API",
-        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\r\n          which require an API key passed in the header",
+        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\n          which require an API key passed in the header",
         "contact": {
             "name": "Daniel Hawton",
             "email": "daniel@hawton.org"
@@ -15,6 +15,197 @@
         "https"
     ],
     "paths": {
+        "/account/{id}": {
+            "get": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Get account info",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID, if null uses authenticated account",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not found"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Modify account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID, if null uses authenticated user",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "Change email address",
+                        "type": "string"
+                    },
+                    {
+                        "name": "current_password",
+                        "in": "formData",
+                        "description": "Current account password, used for password changes",
+                        "type": "string"
+                    },
+                    {
+                        "name": "new_password",
+                        "in": "formData",
+                        "description": "Change password, requires current_password",
+                        "type": "string"
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "formData",
+                        "description": "Change identifier",
+                        "type": "string"
+                    },
+                    {
+                        "name": "identifier_type",
+                        "in": "formData",
+                        "description": "Change identifier type (ie, Civ, LEO, etc)",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Malformed request (usually missing field)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed Request"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, usually for invalid current passwords, duplicate identifiers within same identifier type",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                }
+            }
+        },
         "/auth": {
             "post": {
                 "tags": [
@@ -23,6 +214,20 @@
                 "summary": "Login to CAD",
                 "produces": [
                     "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "User email address",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "User password",
+                        "type": "string"
+                    }
                 ],
                 "responses": {
                     "401": {
@@ -334,7 +539,7 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Get user details",
+                "summary": "Get or set user details, if you change status to offline, the remaining parameters are set to null automatically whether defined explicitly or not.  Values of null will be set when status is 'Offline' or when a logout is processed.",
                 "produces": [
                     "application/json"
                 ],
@@ -549,6 +754,31 @@
                     "type": "string",
                     "example": "daniel@hawton.org"
                 },
+                "status": {
+                    "description": "Current status [valid options: Offline, Available, Busy, Out of Service]",
+                    "type": "string",
+                    "example": "Offline"
+                },
+                "server_id": {
+                    "description": "Server ID connected to, null for offline",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "department": {
+                    "description": "Department user is associated with [when connected, null when offline]",
+                    "type": "string",
+                    "example": "Sheriff"
+                },
+                "division": {
+                    "description": "Division user working in [example: K9]",
+                    "type": "string",
+                    "example": "K9"
+                },
+                "signed_on": {
+                    "description": "Date/Time user signed into CAD",
+                    "type": "string",
+                    "example": "2018-07-30 12:31:33"
+                },
                 "created_at": {
                     "description": "Date/time added to database",
                     "type": "string",
@@ -585,6 +815,10 @@
         }
     },
     "tags": [
+        {
+            "name": "account",
+            "description": "Account maintenance methods"
+        },
         {
             "name": "auth",
             "description": "Authentication and deauthentication methods"

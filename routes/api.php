@@ -32,6 +32,10 @@ Route::group(['middleware'=>'apiauth'], function() {
             Route::post('/status/{userid?}', 'DataController@postUserStatus');
         });
     });
+
+    Route::group(['prefix' => '/account', 'middleware' => 'status:self,admin'], function() {
+        Route::post('/{id}', 'AccountController@postIndex');
+    });
 });
 
 Route::get("/", [
