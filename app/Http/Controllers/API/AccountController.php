@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-
+use App\User;
 
 class AccountController extends APIController
 {
