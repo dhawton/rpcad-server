@@ -23,6 +23,7 @@ Route::group(['middleware'=>'apiauth'], function() {
     });
 
     // @TODO: Add external service hooks for this group
+    Route::get('/roles', 'AccountController@getRoles');
     Route::group(['prefix' => '/account', 'middleware' => 'status:self,admin'], function() {
         Route::get('/{userid?}', 'AccountController@getIndex');
         Route::post('/{userid?}', 'AccountController@postIndex');
@@ -32,7 +33,6 @@ Route::group(['middleware'=>'apiauth'], function() {
             Route::post('/{userid}/roles', 'AccountController@postRole');
             Route::delete('/{userid}/roles', 'AccountController@deleteRole');
         });
-        Route::get('/roles', 'AccountController@getRoles');
     });
 });
 
