@@ -88,7 +88,10 @@
                             ]
                         }
                     }
-                }
+                },
+                "security": [
+                    "session"
+                ]
             },
             "post": {
                 "tags": [
@@ -127,7 +130,7 @@
                         "name": "identifier",
                         "in": "formData",
                         "description": "Change identifier",
-                        "type": "string"
+                        "type": "integer"
                     },
                     {
                         "name": "identifier_type",
@@ -203,7 +206,242 @@
                             "$ref": "#/definitions/OK"
                         }
                     }
-                }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Delete account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not found"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
+        "/account/new": {
+            "post": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Create account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "Email address",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "Password",
+                        "type": "string"
+                    },
+                    {
+                        "name": "identifier",
+                        "in": "formData",
+                        "description": "Identifier",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "identifier_type",
+                        "in": "formData",
+                        "description": "Identifier type (ie, Civ, LEO, etc)",
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "Display name",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Malformed request (usually missing field)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed Request"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, usually for invalid current passwords, duplicate identifiers within same identifier type",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "$ref": "#/definitions/OK"
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
+        "/account/roles": {
+            "get": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Get usable roles",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "roles": {
+                                            "type": "array",
+                                            "items": {
+                                                "description": "Role name",
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
             }
         },
         "/auth": {

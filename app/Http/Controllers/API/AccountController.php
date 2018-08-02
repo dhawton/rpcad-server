@@ -318,4 +318,191 @@ class AccountController extends APIController
         $user->save();
         return response()->ok();
     }
+
+    /**
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Get(
+     *     path="/account/roles",
+     *     summary="Get usable roles",
+     *     produces={"application/json"},
+     *     tags={"account"},
+     *     security={"session"},
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthenticated",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="roles", type="array", @SWG\Items(type="string", description="Role name")),
+     *             )
+     *             }
+     *        )
+     *     )
+     * )
+     */
+    function getRoles() {
+        return response()->ok(['roles' => config('cad.roles')]);
+    }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Post(
+     *     path="/account/{id}/roles",
+     *     summary="Add role to account",
+     *     produces={"application/json"},
+     *     tags={"account"},
+     *     security={"session"},
+     *     @SWG\Parameter(name="id", in="path", description="User ID, if null uses authenticated user", required=true, type="integer"),
+     *     @SWG\Parameter(name="role", in="formData", description="Role to add", type="string", required=true),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Malformed request (usually missing field)",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Malformed Request"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthenticated",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="409",
+     *         description="Conflict/Role already defined",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Conflict"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             ref="#/definitions/OK"
+     *        )
+     *     )
+     * )
+     */
+    function postRole(Request $request, $id) {
+        $user = User::find($id);
+
+        if (!$user) return response()->notfound();
+
+        if (!$request->has("role")) {
+            return response()->malformed();
+        }
+
+        if (!in_array($request->input("role"), config("cad.roles"))) {
+            return response()->notfound();
+        }
+
+        if ($user->hasRole($request->input("role"))) {
+            return response()->conflict();
+        }
+
+        $role = new Role([
+            'user_id' => $user->id,
+            'role' => $request->input("role")
+        ]);
+        $role->save();
+        return response()->ok();
+    }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Delete(
+     *     path="/account/{id}/roles",
+     *     summary="Delete role from account",
+     *     produces={"application/json"},
+     *     tags={"account"},
+     *     security={"session"},
+     *     @SWG\Parameter(name="id", in="path", description="User ID, if null uses authenticated user", required=true, type="integer"),
+     *     @SWG\Parameter(name="role", in="formData", description="Role to delete", type="string", required=true),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Malformed request (usually missing field)",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Malformed Request"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthenticated",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="409",
+     *         description="Conflict/Role already defined",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Conflict"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             ref="#/definitions/OK"
+     *        )
+     *     )
+     * )
+     */
+    function deleteRole(Request $request, $id) {
+        $user = User::find($id);
+
+        if (!$user) return response()->notfound();
+
+        if (!$request->has("role")) {
+            return response()->malformed();
+        }
+
+        if (!in_array($request->input("role"), config("cad.roles"))) {
+            return response()->notfound();
+        }
+
+        if (!$user->hasRole($request->input("role"))) {
+            return response()->notfound();
+        }
+
+        Role::where('user_id', $user->id)->where('role', $request->input("role"))->delete();
+
+        return response()->ok();
+    }
 }
