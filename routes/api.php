@@ -24,11 +24,11 @@ Route::group(['middleware'=>'apiauth'], function() {
 
     // @TODO: Add external service hooks for this group
     Route::group(['prefix' => '/account', 'middleware' => 'status:self,admin'], function() {
-        Route::get('/{id?}', 'AccountController@getIndex')->where("id", "[0-9]+");
-        Route::post('/{id?}', 'AccountController@postIndex')->where("id", "[0-9]+");
+        Route::get('/{userid?}', 'AccountController@getIndex')->where("id", "[0-9]+");
+        Route::post('/{userid?}', 'AccountController@postIndex')->where("id", "[0-9]+");
         Route::group(['middleware' => 'role:admin'], function() {
             Route::post('/new', 'AccountController@postNew');
-            Route::delete('/{id}', 'AccountController@deleteIndex')->where("id", "[0-9]+");
+            Route::delete('/{userid}', 'AccountController@deleteIndex')->where("id", "[0-9]+");
         });
     });
 });

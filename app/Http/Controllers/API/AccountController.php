@@ -314,6 +314,7 @@ class AccountController extends APIController
             'password' => \Hash::make($request->input("password")),
             'name' => $request->input("name")
         ]);
+        $user->active = 1;
         $user->save();
         return response()->ok();
     }
