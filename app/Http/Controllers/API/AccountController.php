@@ -57,7 +57,15 @@ class AccountController extends APIController
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
-     *             ref="#/definitions/OK"
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="user", type="object", ref="#/definitions/User"),
+     *             )
+     *             }
      *        )
      *     )
      * )
@@ -111,7 +119,7 @@ class AccountController extends APIController
         }
 
         $user->save();
-        return response()->ok();
+        return response()->ok(['user' => $user]);
     }
 
     /**
@@ -280,7 +288,15 @@ class AccountController extends APIController
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
-     *             ref="#/definitions/OK"
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="user", type="object", ref="#/definitions/User"),
+     *             )
+     *             }
      *        )
      *     )
      * )
@@ -316,7 +332,7 @@ class AccountController extends APIController
         ]);
         $user->active = 1;
         $user->save();
-        return response()->ok();
+        return response()->ok(['user' => $user]);
     }
 
     /**
@@ -402,7 +418,15 @@ class AccountController extends APIController
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
-     *             ref="#/definitions/OK"
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="user", type="object", ref="#/definitions/User"),
+     *             )
+     *             }
      *        )
      *     )
      * )
@@ -429,7 +453,7 @@ class AccountController extends APIController
             'role' => $request->input("role")
         ]);
         $role->save();
-        return response()->ok();
+        return response()->ok(['user' => $user]);
     }
 
     /**
@@ -479,7 +503,15 @@ class AccountController extends APIController
      *         response=200,
      *         description="OK Response",
      *         @SWG\Schema(
-     *             ref="#/definitions/OK"
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="user", type="object", ref="#/definitions/User"),
+     *             )
+     *             }
      *        )
      *     )
      * )
@@ -503,6 +535,6 @@ class AccountController extends APIController
 
         Role::where('user_id', $user->id)->where('role', $request->input("role"))->delete();
 
-        return response()->ok();
+        return response()->ok(['user' => $user]);
     }
 }
