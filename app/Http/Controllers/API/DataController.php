@@ -156,7 +156,7 @@ class DataController extends Controller
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Get(
-     *     path="/users/{id}",
+     *     path="/users/{userid}",
      *     summary="Get user details",
      *     produces={"application/json"},
      *     tags={"user"},

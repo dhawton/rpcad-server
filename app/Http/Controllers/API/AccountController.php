@@ -12,7 +12,7 @@ class AccountController extends APIController
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Post(
-     *     path="/account/{id}",
+     *     path="/account/{userid}",
      *     summary="Modify account",
      *     produces={"application/json"},
      *     tags={"account"},
@@ -127,7 +127,7 @@ class AccountController extends APIController
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Get(
-     *     path="/account/{id}",
+     *     path="/account/{userid}",
      *     summary="Get account info",
      *     produces={"application/json"},
      *     tags={"account"},
@@ -182,7 +182,7 @@ class AccountController extends APIController
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Delete(
-     *     path="/account/{id}",
+     *     path="/account/{userid}",
      *     summary="Delete account",
      *     produces={"application/json"},
      *     tags={"account"},
@@ -377,7 +377,7 @@ class AccountController extends APIController
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Post(
-     *     path="/account/{id}/roles",
+     *     path="/account/{userid}/roles",
      *     summary="Add role to account",
      *     produces={"application/json"},
      *     tags={"account"},
@@ -462,7 +462,7 @@ class AccountController extends APIController
      * @return array|\Illuminate\Http\JsonResponse|string
      *
      * @SWG\Delete(
-     *     path="/account/{id}/roles",
+     *     path="/account/{userid}/roles",
      *     summary="Delete role from account",
      *     produces={"application/json"},
      *     tags={"account"},
