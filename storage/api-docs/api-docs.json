@@ -15,7 +15,7 @@
         "https"
     ],
     "paths": {
-        "/account/{id}": {
+        "/account/{userid}": {
             "get": {
                 "tags": [
                     "account"
@@ -203,7 +203,20 @@
                     "200": {
                         "description": "OK Response",
                         "schema": {
-                            "$ref": "#/definitions/OK"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
                         }
                     }
                 },
@@ -385,7 +398,20 @@
                     "200": {
                         "description": "OK Response",
                         "schema": {
-                            "$ref": "#/definitions/OK"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
                         }
                     }
                 },
@@ -431,6 +457,226 @@
                                                 "description": "Role name",
                                                 "type": "string"
                                             }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
+        "/account/{userid}/roles": {
+            "post": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Add role to account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID, if null uses authenticated user",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "role",
+                        "in": "formData",
+                        "description": "Role to add",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Malformed request (usually missing field)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed Request"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict/Role already defined",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Delete role from account",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID, if null uses authenticated user",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "role",
+                        "in": "formData",
+                        "description": "Role to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Malformed request (usually missing field)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed Request"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict/Role already defined",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "$ref": "#/definitions/User"
                                         }
                                     },
                                     "type": "object"
@@ -693,7 +939,7 @@
                 ]
             }
         },
-        "/users/{id}": {
+        "/users/{userid}": {
             "get": {
                 "tags": [
                     "user"
