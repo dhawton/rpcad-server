@@ -100,7 +100,9 @@ class AccountController extends APIController
         }
 
         if ($request->has("email")) {
-            $u = User::where("email", $request->input("email"))->first();
+            $u = User::where("email", $request->input("email"))
+                ->where("id", "<>", $user->id)
+                ->first();
             if ($u) return response()->conflict();
 
             $user->email = $request->input("email");
@@ -112,7 +114,10 @@ class AccountController extends APIController
             } else {
                 $it = $user->identifier_type;
             }
-            $u = User::where("identifier_type", $it)->where("identifier", $request->has("identifier"))->first();
+            $u = User::where("identifier_type", $it)
+                ->where("identifier", $request->has("identifier"))
+                ->where("id", "<>", $user->id)
+                ->first();
             if ($u) return response()->conflict();
             $user->identifier = $request->input("identifier");
             $user->identifier_type = $it;
