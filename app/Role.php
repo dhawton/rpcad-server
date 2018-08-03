@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Role extends Model
 {
+    protected $fillable = ['user_id','role'];
+
     public static function add($userid, $role) {
         $r = new Role();
         $r->user_id = $userid;

@@ -23,7 +23,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     @SWG\Property(property="updated_at", type="string", description="Date/time last updated in database", example="2018-07-30 12:31:33"),
  *     @SWG\Property(property="roles", type="array", description="Array of roles",
  *         @SWG\Items(type="array",
- *             @SWG\Property(type="string", description="Role", example="Admin")
+ *             @SWG\Items(type="string", description="Role", example="Admin")
  *         )
  *     )
  * )
