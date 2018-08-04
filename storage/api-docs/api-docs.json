@@ -690,6 +690,76 @@
                 ]
             }
         },
+        "/account/search": {
+            "get": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Get list of accounts",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Get list of users matching filter (identifier, firstname, lastname, or email",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/User"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
         "/auth": {
             "post": {
                 "tags": [
@@ -1277,14 +1347,9 @@
                     "description": "Array of roles",
                     "type": "array",
                     "items": {
-                        "properties": {
-                            "role": {
-                                "description": "Role",
-                                "type": "string",
-                                "example": "admin"
-                            }
-                        },
-                        "type": "object"
+                        "description": "Role",
+                        "type": "string",
+                        "example": "Admin"
                     }
                 }
             },
