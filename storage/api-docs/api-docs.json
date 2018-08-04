@@ -703,12 +703,24 @@
                     {
                         "name": "filter",
                         "in": "query",
-                        "description": "Get list of users matching filter (identifier, firstname, lastname, or email",
+                        "description": "Get list of users matching filter (identifier, name, or email",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "responses": {
+                    "400": {
+                        "description": "Malformed, likely 'filter' is too short (minimum 3 characters)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed"
+                            }
+                        }
+                    },
                     "401": {
                         "description": "Unauthenticated",
                         "schema": {
@@ -834,6 +846,88 @@
                         }
                     }
                 }
+            }
+        },
+        "/characters/{userid}": {
+            "get": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Get list of characters for user",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if null uses authenticated user.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "servers": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Character"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
             }
         },
         "/servers": {
@@ -1220,6 +1314,98 @@
         }
     },
     "definitions": {
+        "Character": {
+            "properties": {
+                "id": {
+                    "description": "CAD Character ID #",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "user_id": {
+                    "description": "CAD User #",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "idnumber": {
+                    "description": "Generated driver's license/ID card number",
+                    "type": "string",
+                    "example": "H123-123-12-123-1"
+                },
+                "firstname": {
+                    "description": "Character's first name",
+                    "type": "string",
+                    "example": "John"
+                },
+                "lastname": {
+                    "description": "Character's last name",
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "address": {
+                    "description": "Street address (98 New Empire Way)",
+                    "type": "string",
+                    "example": "98 New Empire Way"
+                },
+                "city": {
+                    "description": "City name (Los Santos, Harmony, Sandy Shores, Paleto, Grapeseed, Chumash)",
+                    "type": "string",
+                    "example": "Los Santos"
+                },
+                "gender": {
+                    "description": "Gender (male or female)",
+                    "type": "string",
+                    "example": "Male"
+                },
+                "datebirth": {
+                    "description": "Date of Birth (YYYY-MM-DD)",
+                    "type": "string",
+                    "example": "1986-03-06"
+                },
+                "race": {
+                    "description": "Race",
+                    "type": "string",
+                    "example": "White"
+                },
+                "haircolor": {
+                    "description": "Hair color",
+                    "type": "string",
+                    "example": "Brown"
+                },
+                "height_feet": {
+                    "description": "Height in feet",
+                    "type": "integer",
+                    "example": "6"
+                },
+                "height_inches": {
+                    "description": "Height, inches field",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "weight": {
+                    "description": "Weight",
+                    "type": "integer",
+                    "example": "187"
+                },
+                "photo": {
+                    "description": "Coming soon.",
+                    "type": "string"
+                },
+                "licensestatus": {
+                    "description": "License status (ID Only, Learner's Permit, Valid, Suspended, Reokved)",
+                    "type": "string",
+                    "example": "Valid"
+                },
+                "created_at": {
+                    "description": "Date time created",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Date time updated",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "error": {
             "properties": {
                 "status": {
