@@ -216,4 +216,65 @@ class CharacterController extends Controller
         }
         return response()->ok(['character' => $character]);
     }
+
+    /**
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Delete(
+     *     path="/accounts/{userid}/characters/{characterid}",
+     *     summary="Create (characterid null or 0) or edit character",
+     *     produces={"application/json"},
+     *     tags={"servers"},
+     *     security={"session"},
+     *     @SWG\Parameter(name="userid", description="User ID, if 0 uses authenticated user.", in="path", type="integer"),
+     *     @SWG\Parameter(name="characterid", description="Character ID, if not defined, or 0, creates.", in="path", type="integer"),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Not Found",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Not Found"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             type="object",
+     *             allOf={
+     *                 @SWG\Schema(
+     *                     ref="#/definitions/OK"
+     *                 ),
+     *             },
+     *         )
+     *     )
+     * )
+     */
+    public function deleteCharacters($userid, $characterid)
+    {
+        if ($userid == 0) {
+            $user = \Auth::user();
+        } else {
+            $user = User::find($userid);
+            if (!$user) return response()->notfound(['misc' => 'User']);
+        }
+
+        $character = Character::find($characterid);
+        if (!$character) return response()->notfound(['misc' => 'Character']);
+        if ($character->user_id != $user->id && !$user->hasRole('Admin')) {
+            return response()->forbidden();
+        }
+        $character->delete();
+        return response()->ok();
+    }
 }
