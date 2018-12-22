@@ -27,6 +27,8 @@ Route::group(['middleware'=>'apiauth'], function() {
     Route::group(['prefix' => '/account', 'middleware' => 'status:self,admin'], function() {
         Route::get('/{userid?}', 'AccountController@getIndex');
         Route::post('/{userid?}', 'AccountController@postIndex');
+        Route::get('/search', 'AccountController@getSearch');
+        Route::get('/{userid}/characters/{characterid?}', 'CharacterController@getCharacters');
         Route::group(['middleware' => 'role:admin'], function() {
             Route::post('/new', 'AccountController@postNew');
             Route::delete('/{userid}', 'AccountController@deleteIndex');

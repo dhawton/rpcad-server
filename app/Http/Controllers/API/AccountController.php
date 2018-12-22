@@ -542,4 +542,62 @@ class AccountController extends APIController
 
         return response()->ok(['user' => $user]);
     }
+
+    /**
+     * @param Request $request
+     * @return array|\Illuminate\Http\JsonResponse|string
+     *
+     * @SWG\Get(
+     *     path="/account/search",
+     *     summary="Get list of accounts",
+     *     produces={"application/json"},
+     *     tags={"account"},
+     *     security={"session"},
+     *     @SWG\Parameter(name="filter", in="query", description="Get list of users matching filter (identifier, name, or email", required=true, type="string"),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Malformed, likely 'filter' is too short (minimum 3 characters)",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Malformed"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthenticated",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Unauthorized"}},
+     *     ),
+     *     @SWG\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @SWG\Schema(ref="#/definitions/error"),
+     *         examples={"application/json":{"status"="error","msg"="Forbidden"}},
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK Response",
+     *         @SWG\Schema(
+     *             allOf={
+     *             @SWG\Schema(
+     *                 ref="#/definitions/OK"
+     *             ),
+     *             @SWG\Schema(
+     *                 type="object",
+     *                 @SWG\Property(property="users", type="array", @SWG\Items(ref="#/definitions/User")),
+     *             )
+     *             }
+     *        )
+     *     )
+     * )
+     */
+    function getSearch(Request $request) {
+        if (strlen($request->input("filter")) < 3)
+            return response()->malformed();
+        $item = $request->input("filter");
+        $r = User::where('name', 'LIKE', "%$item%")
+            ->orWhere("email", "LIKE", "%$item%")
+            ->orWhere("identifier", "LIKE", "%$item%")
+            ->get();
+
+        return response()->ok(['users' => $r]);
+    }
 }

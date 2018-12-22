@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "CAD Server Web API",
-        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\n          which require an API key passed in the header",
+        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\r\n          which require an API key passed in the header",
         "contact": {
             "name": "Daniel Hawton",
             "email": "daniel@hawton.org"
@@ -690,6 +690,88 @@
                 ]
             }
         },
+        "/account/search": {
+            "get": {
+                "tags": [
+                    "account"
+                ],
+                "summary": "Get list of accounts",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Get list of users matching filter (identifier, name, or email",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Malformed, likely 'filter' is too short (minimum 3 characters)",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Malformed"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/User"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            }
+        },
         "/auth": {
             "post": {
                 "tags": [
@@ -764,6 +846,347 @@
                         }
                     }
                 }
+            }
+        },
+        "/accounts/{userid}/characters/{characterid}": {
+            "get": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Get list of characters for user",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined gets all.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, character doesn't belong to user",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "characters": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Character"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "post": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Create (characterid null or 0) or edit character",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined, or 0, creates.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "firstname",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastname",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender",
+                        "in": "formData",
+                        "description": "Male or Female",
+                        "type": "string"
+                    },
+                    {
+                        "name": "datebirth",
+                        "in": "formData",
+                        "description": "Date of Birth (YYYY-MM-DD)",
+                        "type": "string"
+                    },
+                    {
+                        "name": "race",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "haircolor",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "height_feet",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "height_inches",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "weight",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "photo",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "licensestatus",
+                        "in": "formData",
+                        "description": "Values 'ID Only', 'Learner's Permit', 'Valid', 'Suspended', 'Revoked'",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, character doesn't belong to user",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "characters": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Character"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Create (characterid null or 0) or edit character",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined, or 0, creates.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
             }
         },
         "/servers": {
@@ -1150,6 +1573,98 @@
         }
     },
     "definitions": {
+        "Character": {
+            "properties": {
+                "id": {
+                    "description": "CAD Character ID #",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "user_id": {
+                    "description": "CAD User #",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "idnumber": {
+                    "description": "Generated driver's license/ID card number",
+                    "type": "string",
+                    "example": "H123-123-12-123-1"
+                },
+                "firstname": {
+                    "description": "Character's first name",
+                    "type": "string",
+                    "example": "John"
+                },
+                "lastname": {
+                    "description": "Character's last name",
+                    "type": "string",
+                    "example": "Doe"
+                },
+                "address": {
+                    "description": "Street address (98 New Empire Way)",
+                    "type": "string",
+                    "example": "98 New Empire Way"
+                },
+                "city": {
+                    "description": "City name (Los Santos, Harmony, Sandy Shores, Paleto, Grapeseed, Chumash)",
+                    "type": "string",
+                    "example": "Los Santos"
+                },
+                "gender": {
+                    "description": "Gender (male or female)",
+                    "type": "string",
+                    "example": "Male"
+                },
+                "datebirth": {
+                    "description": "Date of Birth (YYYY-MM-DD)",
+                    "type": "string",
+                    "example": "1986-03-06"
+                },
+                "race": {
+                    "description": "Race",
+                    "type": "string",
+                    "example": "White"
+                },
+                "haircolor": {
+                    "description": "Hair color",
+                    "type": "string",
+                    "example": "Brown"
+                },
+                "height_feet": {
+                    "description": "Height in feet",
+                    "type": "integer",
+                    "example": "6"
+                },
+                "height_inches": {
+                    "description": "Height, inches field",
+                    "type": "integer",
+                    "example": "1"
+                },
+                "weight": {
+                    "description": "Weight",
+                    "type": "integer",
+                    "example": "187"
+                },
+                "photo": {
+                    "description": "Coming soon.",
+                    "type": "string"
+                },
+                "licensestatus": {
+                    "description": "License status (ID Only, Learner's Permit, Valid, Suspended, Reokved)",
+                    "type": "string",
+                    "example": "Valid"
+                },
+                "created_at": {
+                    "description": "Date time created",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "Date time updated",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "error": {
             "properties": {
                 "status": {
@@ -1277,14 +1792,9 @@
                     "description": "Array of roles",
                     "type": "array",
                     "items": {
-                        "properties": {
-                            "role": {
-                                "description": "Role",
-                                "type": "string",
-                                "example": "admin"
-                            }
-                        },
-                        "type": "object"
+                        "description": "Role",
+                        "type": "string",
+                        "example": "Admin"
                     }
                 }
             },

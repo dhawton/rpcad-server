@@ -19,7 +19,8 @@ class CreateCharactersTable extends Migration
             $table->string('idnumber')->nullable();
             $table->string('firstname');
             $table->string('lastname');
-            $table->string('address');
+            $table->string('address')->default("98 New Empire Way");
+            $table->string("city")->default("Los Santos");
             $table->enum("gender", ["Male","Female"]);
             $table->date("datebirth");
             $table->string("race");

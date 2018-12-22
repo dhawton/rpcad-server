@@ -31,6 +31,11 @@ class StatusCheck
                     }
                     break;
                 case "self":
+                    if (!isset($request->userid)) {
+                        \Log::info("Is self");
+                        $valid = true;
+                        break(2);
+                    }
                     if ($request->userid == \Auth::user()->id) {
                         \Log::info("Is self");
                         $valid = true;

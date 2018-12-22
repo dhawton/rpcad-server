@@ -24,6 +24,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         Route::pattern('userid', '[0-9]+');
+        Route::pattern('characterid', '[0-9]+');
 
         parent::boot();
     }
@@ -65,7 +66,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::domain(env('URL_API'))
+        Route::prefix('api')
              ->middleware('api')
              ->namespace($this->namespace . "\API")
              ->group(base_path('routes/api.php'));
