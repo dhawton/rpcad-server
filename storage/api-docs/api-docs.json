@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "title": "CAD Server Web API",
-        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\n          which require an API key passed in the header",
+        "description": "Paths with lock icon on right side require authentication, except for paths beginning with /external\r\n          which require an API key passed in the header",
         "contact": {
             "name": "Daniel Hawton",
             "email": "daniel@hawton.org"
@@ -848,7 +848,7 @@
                 }
             }
         },
-        "/characters/{userid}": {
+        "/accounts/{userid}/characters/{characterid}": {
             "get": {
                 "tags": [
                     "servers"
@@ -861,7 +861,277 @@
                     {
                         "name": "userid",
                         "in": "path",
-                        "description": "User ID, if null uses authenticated user.",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined gets all.",
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, character doesn't belong to user",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "characters": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Character"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "post": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Create (characterid null or 0) or edit character",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined, or 0, creates.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "firstname",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "lastname",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender",
+                        "in": "formData",
+                        "description": "Male or Female",
+                        "type": "string"
+                    },
+                    {
+                        "name": "datebirth",
+                        "in": "formData",
+                        "description": "Date of Birth (YYYY-MM-DD)",
+                        "type": "string"
+                    },
+                    {
+                        "name": "race",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "haircolor",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "height_feet",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "height_inches",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "weight",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "photo",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "licensestatus",
+                        "in": "formData",
+                        "description": "Values 'ID Only', 'Learner's Permit', 'Valid', 'Suspended', 'Revoked'",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Unauthorized"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Forbidden"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Not Found"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict, character doesn't belong to user",
+                        "schema": {
+                            "$ref": "#/definitions/error"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "status": "error",
+                                "msg": "Conflict"
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "OK Response",
+                        "schema": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/OK"
+                                },
+                                {
+                                    "properties": {
+                                        "characters": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Character"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "security": [
+                    "session"
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "servers"
+                ],
+                "summary": "Create (characterid null or 0) or edit character",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "userid",
+                        "in": "path",
+                        "description": "User ID, if 0 uses authenticated user.",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "characterid",
+                        "in": "path",
+                        "description": "Character ID, if not defined, or 0, creates.",
                         "type": "integer"
                     }
                 ],
@@ -909,17 +1179,6 @@
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/OK"
-                                },
-                                {
-                                    "properties": {
-                                        "servers": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/Character"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
                                 }
                             ]
                         }

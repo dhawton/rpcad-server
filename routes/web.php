@@ -12,9 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (\Auth::guest()) return redirect("/login");
+    else return redirect("/home");
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/cad', 'HomeController@getCad');

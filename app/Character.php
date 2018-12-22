@@ -41,19 +41,18 @@ class Character extends Model
         parent::boot();
 
         self::creating(function($model) {
-            $model->idnumber = $model->generateIDNumber();
+            $model->id = $model->generateIDNumber();
         });
     }
 
     public function generateIDNumber() {
-        // Format: Letter - 3 - 3 - 2 - 3 - 1
+        // Format: Letter + 3 - 4 - 4
         $letters = [
             '' , 'A', 'B', 'C', 'D', 'E', 'F',
             'G', 'H', 'I', 'J', 'K', 'L', 'M'
         ];
-        preg_match("/^(\d\d\d)(\d\d\d)(\d\d)(\d\d\d)(\d)/", microtime(true) * 100, $matches);
-        return $letters[ date("n") ] . $matches[1] . "-" . $matches[2] . "-" . $matches[3] . "-" .
-            $matches[4] . "-" . $matches[5];
+        preg_match("/^(\d\d\d)(\d\d\d\d)(\d\d\d\d)/", microtime(true) * 100, $matches);
+        return $letters[ date("n") ] . $matches[1] . "-" . $matches[2] . "-" . $matches[3];
     }
 
     public function user() {
